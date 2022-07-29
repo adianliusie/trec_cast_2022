@@ -1,4 +1,7 @@
-Download TREC 2021 Evaluation data in this directpry by running the line:
+Download TREC 2021 Evaluation data in this directory: \
+
+```
 git clone https://github.com/daltonj/treccastweb
+```
 
 

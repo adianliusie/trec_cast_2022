@@ -25,7 +25,7 @@ class DataLoader:
         else: raise ValueError('Invalid data set provided')
             
     def load_trec_2021(self):
-        path = '/home/dawna/mjfg/.trec_2022/data/trec_eval_data/2021/2021_automatic_evaluation_topics_v1.0.json'
+        path='/home/al826/rds/hpc-work/2022/trec/trec_cast_2022/data/treccastweb/2021/2021_automatic_evaluation_topics_v1.0.json'
         json_data = load_json(path)
         
         self.convs = []

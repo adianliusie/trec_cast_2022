@@ -23,14 +23,14 @@ class QueryRewriter:
         
         output = self.model.generate(input_ids=tokenized_input)
         query = self.tokenizer.decode(output[0], skip_special_tokens=True)        
-        output = {'_id': conv_state['query_id'], 
+        output = {'q_id': conv_state['query_id'], 
                   'text': query, 
                   'passage':conv_state['passage'],
                   'result_id':conv_state['result_id'], 
                   'passage_id': conv_state['passage_id']}
         return output
     
-    def rewrite_queries(self, data_name:str, output_path:str=None):
+    def rewrite_queries(self, data_name:str, output_path:str):
         """ converts all conv states to rewritten queries """
         
         eval_data = DataLoader(data_name)
@@ -41,10 +41,7 @@ class QueryRewriter:
             query = self.rewrite_query(conv_state)
             queries.append(query)
         
-        if output_path:
-            save_jsonl(queries, output_path)
-        else:
-            return queries
+        save_jsonl(queries, output_path)
     
 
         

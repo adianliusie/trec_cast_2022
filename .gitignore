@@ -1,0 +1,6 @@
+trec_env
+data/*
+outputs/*
+*.jsonl
+
+!data/README.md

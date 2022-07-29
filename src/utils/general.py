@@ -8,8 +8,8 @@ def save_jsonl(data:list, path:str):
     with jsonlines.open(path, 'w') as writer:
         writer.write_all(data)
         
-def load_jsonl(path)->Iterator:
-    with open('./data/my_filename.jsonl', 'r') as json_file:
+def load_jsonl(path):
+    with open(path, 'r') as json_file:
         json_list = list(json_file)
 
     return [json.loads(json_str) for json_str in json_list]

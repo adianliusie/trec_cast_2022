@@ -10,13 +10,13 @@ class SentenceReranker:
     def __init__(self):
         self.model = SentenceTransformer('sentence-transformers/msmarco-distilbert-dot-v5')
 
-    def get_docs_rank_order(self, query:str, docs:str)->List[int]:
+    def get_doc_scores(self, query:str, docs:str)->List[int]:
         query_emb = self.model.encode(query)
         doc_emb = self.model.encode(docs)
 
         #Compute dot score between query and all document embeddings
         scores = util.dot_score(query_emb, doc_emb)[0].cpu().tolist()
-        return np.argsort(scores)[::-1]
+        return scores
 
     def rerank(self, query_path:str, docs_path:str, output_path:str):
         queries = load_jsonl(query_path)
@@ -24,13 +24,20 @@ class SentenceReranker:
 
         output = []
         for query, q_docs in tqdm(zip(queries, queries_docs), total=len(queries)):
+            #Get similarity score (with query) for every doc
             assert str(query['q_id']) == str(q_docs['q_id'])
             query_text = query['text']
             docs_text = [doc['text'] for doc in q_docs['docs']]
+            scores = self.get_doc_scores(query_text, docs_text)
             
-            ordering = self.get_docs_rank_order(query_text, docs_text)
+            #save scores and then reorder
+            ordering = np.argsort(scores)[::-1]
+            for i in range(q_docs):
+                q_docs['doc'][i]['score'] =  scores[i]
             new_docs = [q_docs['docs'][i] for i in ordering]
             q_docs['documents'] = new_docs
+            
+            #add new reordered documents
             output.append(q_docs)
         
         save_jsonl(output, output_path)

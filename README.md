@@ -1,6 +1,24 @@
 # TREC CaST 2022 attempt for HEATWAVE-CAM 
 
-### Relevant links
+---
+### Set Up 
+* clone this directory 
+	```
+	git clone https://github.com/usnistgov/trec_eval
+	```
+* Install the relevant dependencies
+	```
+	pip install -r requirements.txt
+	```
+
+* In the data directory download the relevant data sets (further instructions can be found in the data directory) 
+**Need to add corpora set up (MS MARCO, KILT, WaPo)*
+
+* In the scripts directory run the 3 stage pipeline of query rewriting, BM25, and reranking  
+**Need to add BM25 implementation in src and create script for it* 
+
+* Evaluation of overall system performance can be done in the eval folder 
+**Not tested yet- need correct Doc-IDs to test the script*
 
 
 ### Repository Structure

@@ -2,5 +2,6 @@ trec_env
 data/*
 outputs/*
 *.jsonl
+eval/trec_eval
 
 !data/README.md

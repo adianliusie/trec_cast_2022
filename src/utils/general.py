@@ -1,5 +1,6 @@
 import json
 import jsonlines
+import sys
 
 def save_jsonl(data:list, path:str):
     if '.jsonl' not in path:
@@ -21,3 +22,9 @@ def load_json(path:str)->dict:
 
 def flatten(x):
     return [i for j in x for i in j]
+
+def save_script_args():
+    CMD = f"python {' '.join(sys.argv)}\n"
+    
+    with open('CMDs', 'a+') as f:
+        f.write(CMD)

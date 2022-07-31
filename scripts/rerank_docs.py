@@ -3,6 +3,8 @@ import argparse
 from src.modules.reranker import SentenceReranker
 
 if __name__ == '__main__':
+    save_script_args()
+
     parser = argparse.ArgumentParser(description='reranks documents in terms of relevants for a given query')
     parser.add_argument('--system',  default='sbert_reanker', help='which reranker to use for reranking')
     parser.add_argument('--query_path',  help='input queries (needs q_id and text)')

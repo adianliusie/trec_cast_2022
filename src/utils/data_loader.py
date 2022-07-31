@@ -42,7 +42,8 @@ class DataLoader:
                 context_1 = [utt.text for utt in utts[max(k-5, 0):max(k-2, 0)]]
                 context_2 = [utt.text_passage for utt in utts[max(k-2, 0):k]]
                 utt_text = [cur_utt.text]               
-                cur_ex = {'query_id':len(output),
+                cur_ex = {#'query_id':len(output),
+                          'query_id':f'{conv.number}_{utt.number}',
                           'context':context_1 + flatten(context_2) + utt_text, 
                           'passage':cur_utt.passage, 
                           'result_id':cur_utt.canonical_result_id, 

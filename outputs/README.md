@@ -4,12 +4,12 @@
 ```javascript
 [{ "q_id": "106_1", 
    "text":"What are the most common types of breast cancer",
-   "result": "More research is needed. Types Breast cancer can be...",
+   "result_text": "More research is needed. Types Breast cancer can be...",
    "result_id":"MARCO_D59865" },
    
   { "q_id": "106_2", 
   "text":"Once the cancer breaks out, how likely is it to spread?",
-  "result": "Even though this condition doesn’t spread, it’s...",
+  "result_text": "Even though this condition doesn’t spread, it’s...",
   "result_id":"MARCO_D684514" }, 
   ...
 ]

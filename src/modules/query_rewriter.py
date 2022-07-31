@@ -25,9 +25,8 @@ class QueryRewriter:
         query = self.tokenizer.decode(output[0], skip_special_tokens=True)        
         output = {'q_id': conv_state['query_id'], 
                   'text': query, 
-                  'passage':conv_state['passage'],
-                  'result_id':conv_state['result_id'], 
-                  'passage_id': conv_state['passage_id']}
+                  'result_text': conv_state['result_text'],
+                  'result_id': conv_state['result_id']}
         return output
     
     def rewrite_queries(self, data_name:str, output_path:str):

@@ -27,15 +27,15 @@ class SentenceReranker:
             #Get similarity score (with query) for every doc
             assert str(query['q_id']) == str(q_docs['q_id'])
             query_text = query['text']
-            docs_text = [doc['text'] for doc in q_docs['docs']]
+            docs_text = [doc['text'] for doc in q_docs['results']]
             scores = self.get_doc_scores(query_text, docs_text)
             
             #save scores and then reorder
             ordering = np.argsort(scores)[::-1]
             for i in range(q_docs):
-                q_docs['doc'][i]['score'] =  scores[i]
-            new_docs = [q_docs['docs'][i] for i in ordering]
-            q_docs['documents'] = new_docs
+                q_docs['results'][i]['score'] =  scores[i]
+            new_results = [q_docs['results'][i] for i in ordering]
+            q_docs['results'] = new_results
             
             #add new reordered documents
             output.append(q_docs)

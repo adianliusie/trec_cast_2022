@@ -1,9 +1,11 @@
-from .general import flatten, load_json
+from .general import flatten, load_json, get_base_dir
+
+BASE_DIR = get_base_dir()
 
 class Conversation:
     def __init__(self, **kwargs):
         conv = kwargs
-        self.conv_id = conv['number']
+        self.number = conv['number']
         self.utterances = [Utterance(**utt) for utt in conv['turn']]
         
 class Utterance():
@@ -25,7 +27,7 @@ class DataLoader:
         else: raise ValueError('Invalid data set provided')
             
     def load_trec_2021(self):
-        path='/home/al826/rds/hpc-work/2022/trec/trec_cast_2022/data/treccastweb/2021/2021_automatic_evaluation_topics_v1.0.json'
+        path=f'{BASE_DIR}/data/treccastweb/2021/2021_automatic_evaluation_topics_v1.0.json'
         json_data = load_json(path)
         
         self.convs = []
@@ -39,13 +41,13 @@ class DataLoader:
             
             for k in range(len(utts)):
                 cur_utt = utts[k]
-                context_1 = [utt.text for utt in utts[max(k-5, 0):max(k-2, 0)]]
+                context_1 = [utt.text for utt in utts[max(k-4, 0):max(k-2, 0)]]
                 context_2 = [utt.text_passage for utt in utts[max(k-2, 0):k]]
                 utt_text = [cur_utt.text]               
                 cur_ex = {#'query_id':len(output),
-                          'query_id':f'{conv.number}_{utt.number}',
+                          'query_id':f'{conv.number}_{cur_utt.number}',
                           'context':context_1 + flatten(context_2) + utt_text, 
-                          'passage':cur_utt.passage, 
+                          'result_text':cur_utt.passage, 
                           'result_id':cur_utt.canonical_result_id, 
                           'passage_id':cur_utt.passage_id}
                 output.append(cur_ex)        

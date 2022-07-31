@@ -1,6 +1,7 @@
 import json
 import jsonlines
 import sys
+from os.path import abspath
 
 def save_jsonl(data:list, path:str):
     if '.jsonl' not in path:
@@ -28,3 +29,18 @@ def save_script_args():
     
     with open('CMDs', 'a+') as f:
         f.write(CMD)
+        
+def get_base_dir():
+    """automatically gets root dir of framework"""
+    
+    #gets path of the src folder 
+    cur_path = abspath(__file__)
+    src_path = '/src'.join(cur_path.split('/src')[:-1])
+    
+    #can be called through a symbolic link, if so go out one more dir.
+    if src_path.split('/')[-1] in ['eval', 'scripts']:
+        base_path = '/'.join(src_path.split('/')[:-1])
+    else:
+        base_path = src_path
+        
+    return base_path

@@ -1,6 +1,7 @@
 import argparse
 
 from src.modules.reranker import SentenceReranker
+from src.utils.general import save_script_args
 
 if __name__ == '__main__':
     save_script_args()

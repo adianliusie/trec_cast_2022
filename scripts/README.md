@@ -7,7 +7,11 @@ python rewrite_queries.py --data_name trec_2021 --output_path ../outputs/queries
 
 **BM25**
 
-Needs to (1) install beir (pip install beir), (2) install Elasticsearch, then run elasticsearch in the background before running retrieval_bm25.py. 
+Needs to 
+
+(1) install beir (pip install beir), 
+
+(2) install Elasticsearch, then run elasticsearch in the background before running retrieval_bm25.py. Instructions for setting up Elasticsearch can be found in https://colab.research.google.com/github/tensorflow/io/blob/master/docs/tutorials/elasticsearch.ipynb#scrollTo=48LqMJ1BEHm5.
 ```
 python retrieval_bm25.py --data_path ../outputs/query4bm25/bm25_cast_test1 --output_path ../outputs/bm25/trec_2021_baseline_msmacro-v2-00.jsonl
 ```

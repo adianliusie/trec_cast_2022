@@ -2,6 +2,8 @@ data/*
 outputs/*
 scripts/CMDs
 eval/trec_eval
+local/src
+local/CMDs
 *.swp
 *.jsonl
 

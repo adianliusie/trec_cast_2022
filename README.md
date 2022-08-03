@@ -47,3 +47,20 @@ trec_cast_2022
 - data: where all the external data is stored (used by src)
 - eval: the evaluation scripts, used to measure overall end-to-end performance
 
+### Useful HPC Commands (Temp section for this week)
+
+- To load python3.8 into your session (to make the virtual environment) use the following command
+	```
+	load module python3.8
+	```
+
+- To get exclusive access to a GPU machine ([documentation](https://docs.hpc.cam.ac.uk/hpc/user-guide/interactive.html))
+	```
+	sintr -A GALES-SL4-GPU -p pascal -t 2:0:0 --exclusive
+	```
+	*can also use `-p ampere` to request exclusive access to the newer A100 GPUs (but a bit amoral!)*
+- Can alternatively request exclusive access to a CPU
+	```
+	sintr -A GALES-SL4-CPU -p skylake -t 2:0:0 --exclusive
+	```
+	Other clusters can be requested in a similar way (e.g. with `-p cclake`)

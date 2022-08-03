@@ -1,9 +1,13 @@
-trec_env
 data/*
 outputs/*
 scripts/CMDs
 eval/trec_eval
 *.swp
 *.jsonl
+
+trec_env
+*.file.*
+*.out
+test
 
 !*/README.md

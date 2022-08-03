@@ -32,7 +32,7 @@ class SentenceReranker:
             
             #save scores and then reorder
             ordering = np.argsort(scores)[::-1]
-            for i in range(q_docs):
+            for i in range(len(q_docs)):
                 q_docs['results'][i]['score'] =  scores[i]
             new_results = [q_docs['results'][i] for i in ordering]
             q_docs['results'] = new_results

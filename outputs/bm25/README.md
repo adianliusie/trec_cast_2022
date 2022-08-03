@@ -1,9 +1,11 @@
 **bm25 input format:**
+```
 datadir
 └── qrels
 │    └── test.csv
 └── queries.jsonl
 └── corpus.jsonl
+```
 queries.jsonl
 ```javascript
 [{"_id": "106_1", "text": "What are the most common types of cancer in regards to me?"},

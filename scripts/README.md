@@ -6,6 +6,7 @@ python rewrite_queries.py --data_name trec_2021 --output_path ../outputs/queries
 ```
 
 **BM25**
+
 Needs to (1) install beir (pip install beir), (2) install Elasticsearch, then run elasticsearch in the background before running retrieval_bm25.py. 
 ```
 python retrieval_bm25.py --data_path /home/mq227/rds/hpc-work/beir/data/bm25_cast_test1 --output_path ../outputs/bm25/trec_2021_baseline_msmacro-v2-00.jsonl
@@ -35,6 +36,7 @@ T5 Model is then finetuned on the [CANARD](http://users.umiacs.umd.edu/~jbg/docs
 *The trained rewriter is taken from the huggingface hub: [model link](https://huggingface.co/castorini/t5-base-canard)*
 
 **Retrieval**
+
 BM25: a traditional statistical method
 
 **Reranker**

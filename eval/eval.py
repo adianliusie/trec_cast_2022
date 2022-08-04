@@ -13,5 +13,5 @@ if __name__ == '__main__':
     if '.jsonl' in args.predictions: 
         args.predictions = convert_jsonl_to_results(args.predictions)
     
-    os.system(f'bash trec_eval {args.references} {args.predictions}')
+    os.system(f'./trec_eval/trec_eval {args.references} results/{args.predictions}')
     

@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
     #### Save retrieval results ####
     fout = open(args.output_path, 'w', encoding='utf-8')
-    for query_id in sorted(results.keys()):
+    for query_id in results.keys():
         result_dict = dict()
         result_dict["q_id"] = query_id
         result_dict["results"] = []

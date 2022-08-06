@@ -42,6 +42,14 @@ class QueryRewriter:
         
         save_jsonl(queries, output_path)
     
+    def gold_rewrite_queries(self, data_name:str, output_path:str):
+        """ prepares the dataset with the gold standard queries """
+        
+        eval_data = DataLoader(data_name)
+        queries = eval_data.get_gold_rewrites()
+        
+        save_jsonl(queries, output_path)
+
 
         
     

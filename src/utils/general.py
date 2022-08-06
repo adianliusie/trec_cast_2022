@@ -7,7 +7,7 @@ def save_jsonl(data:list, path:str):
     if '.jsonl' not in path:
         path = path + '.jsonl'
         
-    with jsonlines.open(path, 'w') as writer:
+    with jsonlines.open(path, 'x') as writer:
         writer.write_all(data)
         
 def load_jsonl(path):

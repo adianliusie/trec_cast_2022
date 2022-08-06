@@ -2,37 +2,57 @@ from .general import flatten, load_json, get_base_dir
 
 BASE_DIR = get_base_dir()
 
-class Conversation:
-    def __init__(self, **kwargs):
-        conv = kwargs
-        self.number = conv['number']
-        self.utterances = [Utterance(**utt) for utt in conv['turn']]
+class TrecConversation:
+    def __init__(self, conv_id:int, utts:list, fields:dict=None):
+        self.conv_id = str(conv_id)
         
-class Utterance():
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-        self.text = self.raw_utterance
+        #reformat utterance fields if necessary
+        if fields:
+            utts = [self.reformat_utt(utt, fields) for utt in utts]
+            
+        self.utterances = [TrecUtterance(**utt) for utt in utts]
+    
+    @staticmethod
+    def reformat_utt(utt, fields):
+        utt = utt.copy()
+        for k, v in fields.items():
+            utt[k] = utt.pop(v)
+        return utt
+
+class TrecUtterance():
+    def __init__(self, utt_id:int, text:str, result_text:str=None, result_id:int=None, gold_rewritten_utt:str=None, **kwargs):
+        self.utt_id = str(utt_id)
+        self.text = text
+        self.result_text = result_text
+        self.result_id = result_id
+        self.gold_rewritten_utt = gold_rewritten_utt
 
     @property
     def text_passage(self):
-        return [self.text, self.passage]
+        return [self.text, self.result_text]
         
     def __repr__(self):
         return self.text
     
 class DataLoader:
     def __init__(self, data_name):
-        if data_name == 'trec_2021': self.load_trec_2021()
+        if data_name == 'trec_2021': 
+            self.convs = self._load_trec_2021()
+        elif data_name == 'trec_2022':
+            self.convs = self._load_trec_2022()
+
         else: raise ValueError('Invalid data set provided')
             
-    def load_trec_2021(self):
-        path=f'{BASE_DIR}/data/treccastweb/2021/2021_automatic_evaluation_topics_v1.0.json'
-        json_data = load_json(path)
-        
-        self.convs = []
-        for conv in json_data:
-            self.convs.append(Conversation(**conv))
+    def get_gold_rewrites(self):
+        output = []
+        for conv in self.convs:
+            for utt in conv.utterances:
+                cur_ex = {'q_id': f'{conv.conv_id}_{utt.utt_id}', 
+                          'text': utt.gold_rewritten_utt,
+                          'result_text': utt.result_text,
+                          'result_id': utt.result_id}
+                output.append(cur_ex)        
+        return output
     
     def get_conv_states(self):
         output = []
@@ -40,16 +60,42 @@ class DataLoader:
             utts = conv.utterances
             
             for k in range(len(utts)):
-                cur_utt = utts[k]
-                context_1 = [utt.text for utt in utts[max(k-4, 0):max(k-2, 0)]]
-                context_2 = [utt.text_passage for utt in utts[max(k-2, 0):k]]
-                utt_text = [cur_utt.text]               
-                cur_ex = {#'query_id':len(output),
-                          'query_id':f'{conv.number}_{cur_utt.number}',
+                utt = utts[k]
+                context_1 = [u.text for u in utts[max(k-4, 0):max(k-2, 0)]]
+                context_2 = [u.text_passage for u in utts[max(k-2, 0):k]]
+                utt_text = [utt.text]               
+                cur_ex = {'query_id':f'{conv.conv_id}_{utt.utt_id}',
                           'context':context_1 + flatten(context_2) + utt_text, 
-                          'result_text':cur_utt.passage, 
-                          'result_id':cur_utt.canonical_result_id, 
-                          'passage_id':cur_utt.passage_id}
+                          'result_text':utt.result_text, 
+                          'result_id':utt.result_id}
                 output.append(cur_ex)        
         return output
+    
+    def _load_trec_2021(self):
+        """load trec 2021 eval data """
+        
+        path=f'{BASE_DIR}/data/treccastweb/2021/2021_automatic_evaluation_topics_v1.0.json'
+        json_data = load_json(path)
+        
+        # fields defines how to map given fields to standard 
+        fields = {'utt_id':'number', 'text':'raw_utterance', 'result_text':'passage', 
+                  'result_id':'canonical_result_id', 'gold_rewritten_utt':'automatic_rewritten_utterance'}
+        
+        convs = []
+        for conv in json_data:
+            convs.append(TrecConversation(conv_id=conv['number'], utts=conv['turn'], fields=fields))
+        return convs
+    
+    def _load_trec_2022(self):
+        path=f'{BASE_DIR}/data/treccastweb/2022/2022_evaluation_topics_flattened_duplicated_v1.0.json'
+        json_data = load_json(path)
+        
+        fields = {'utt_id':'number', 'text':'utterance', 'result_text':'response',
+                  'result_id':'provenance', 'gold_rewritten_utt':'manual_rewritten_utterance'}
+        
+        convs = []
+        for conv in json_data:
+            if conv['number'] == 142: continue
+            convs.append(TrecConversation(conv_id=conv['number'], utts=conv['turn'], fields=fields))
+        return convs
     

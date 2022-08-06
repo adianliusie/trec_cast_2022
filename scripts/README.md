@@ -5,6 +5,8 @@
 python rewrite_queries.py --data_name trec_2021 --output_path ../outputs/queries/trec_2021_baseline.jsonl
 ```
 
+the  ```--gold``` argument can also be used to generate reference rewritten queries
+
 **BM25**
 
 Needs to 

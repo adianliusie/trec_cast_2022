@@ -1,6 +1,7 @@
 from typing import List
 import numpy as np
 from tqdm import tqdm
+import os, sys 
 
 from sentence_transformers import SentenceTransformer, util
 
@@ -19,6 +20,9 @@ class SentenceReranker:
         return scores
 
     def rerank(self, query_path:str, docs_path:str, output_path:str):
+        if os.path.exists(output_path):
+            sys.exit(f"{output_path} file exists!")
+
         queries = load_jsonl(query_path)
         queries_docs = load_jsonl(docs_path)
 

@@ -59,11 +59,11 @@ if __name__ == '__main__':
     # model = BM25(index_name=index_name, hostname=hostname, initialize=initialize, number_of_shards=number_of_shards)
     # (2) For datasets with big corpus ==> keep default configuration
     model = BM25(index_name=index_name, hostname=hostname, initialize=initialize)
-    retriever = EvaluateRetrieval(model)
+    retriever = EvaluateRetrieval(model, k_values=[1,3,5,10,100,1000])
 
     #### Retrieve dense results (format of results is identical to qrels)
     results = retriever.retrieve(corpus, queries)
-
+    
     #### Evaluate your retrieval using NDCG@k, MAP@K ...
     logging.info("Retriever evaluation for k in: {}".format(retriever.k_values))
     ndcg, _map, recall, precision = retriever.evaluate(qrels, results, retriever.k_values)

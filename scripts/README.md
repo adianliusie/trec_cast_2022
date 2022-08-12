@@ -6,6 +6,7 @@ python rewrite_queries.py --data_name trec_2021 --output_path ../outputs/queries
 ```
 
 the  ```--gold``` argument can also be used to generate reference rewritten queries
+the  ```--raw_context``` argument can also be used to select raw context. ```--raw_context 5``` will select the previous 5 user queries and 5 system responses, ```--raw_context 5 2``` will select the previous 5 user queries but only previous 2 system responses. Maximum of 250 words used. 
 
 **BM25**
 

@@ -92,7 +92,7 @@ if __name__ == '__main__':
     cross_encoder_model = MonoT5('castorini/monot5-base-msmarco', token_false='▁false', token_true='▁true')
     reranker = Rerank(cross_encoder_model, batch_size=128)
 
-    # # Rerank top-100 results using the reranker provided
+    # # Rerank top-1000 results using the reranker provided
     rerank_results = reranker.rerank(corpus, queries, results, top_k=1000)
 
     #### Evaluate your retrieval using NDCG@k, MAP@K ...

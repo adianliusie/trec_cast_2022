@@ -5,22 +5,15 @@ from typing import List
 from tqdm import tqdm
 import os, sys 
 
+from abc import ABC, abstractmethod
 from sentence_transformers import SentenceTransformer, util
 
 from ..utils.general import load_jsonl, save_jsonl
 
-class SbertReranker:
-    def __init__(self):
-        self.model = SentenceTransformer('sentence-transformers/msmarco-distilbert-dot-v5')
-        
+class ReRanker(ABC):
+    @abstractmethod
     def get_doc_scores(self, query:str, docs:List[str])->List[int]:
-        """old method, uses entire document as the response"""
-        query_emb = self.model.encode(query)
-        doc_emb = self.model.encode(docs)
-
-        #Compute dot score between query and all document embeddings
-        scores = util.dot_score(query_emb, doc_emb)[0].cpu().tolist()
-        return scores
+        pass
     
     def rerank(self, query_path:str, docs_path:str, output_path:str):
         if os.path.exists(output_path):
@@ -47,11 +40,26 @@ class SbertReranker:
             #add new reordered documents
             output.append(q_docs)
         
-        save_jsonl(output, output_path)
+        save_jsonl(output, output_path)    
+    
+class SbertReranker(ReRanker):
+    def __init__(self, device):
+        self.model = SentenceTransformer('sentence-transformers/msmarco-distilbert-dot-v5', device=device)
+            
+    def get_doc_scores(self, query:str, docs:List[str])->List[int]:
+        """old method, uses entire document as the response"""
+        query_emb = self.model.encode(query)
+        doc_emb = self.model.encode(docs)
+
+        #Compute dot score between query and all document embeddings
+        scores = util.dot_score(query_emb, doc_emb)[0].cpu().tolist()
+        return scores
+    
+class PassageReranker(ReRanker):
+    def __init__(self, device=None):
+        self.model = SentenceTransformer('sentence-transformers/msmarco-distilbert-dot-v5', device=device)
+        if device: self.model.to(device)
         
-class PassageReranker(SbertReranker):
-    def __init__(self):
-        super().__init__()
         try:
             self.load_spacy()
         except:
@@ -63,7 +71,6 @@ class PassageReranker(SbertReranker):
                  "parser", "tagger", "ner", "attribute_ruler", "lemmatizer", "tok2vec"])
         self.nlp.enable_pipe("senter")
         self.nlp.max_length = 2000000  # for documents that are longer than the spacy character limit
-
 
     def get_doc_scores(self, query:str, docs:List[str], max_len=250):
         #get query embedding
@@ -103,4 +110,5 @@ class PassageReranker(SbertReranker):
         if cur_passage:
             passages.append(cur_passage)
         return passages
+
     

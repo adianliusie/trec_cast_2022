@@ -4,6 +4,7 @@
 import json
 import argparse
 from src.utils.general import save_script_args
+import os
 
 # infile = "/home/mq227/rds/hpc-work/trec_cast_2022/outputs/queries/trec_2021_baseline_v2.jsonl"
 # qrelfile = "/home/mq227/rds/hpc-work/beir/data/bm25_cast_test1/qrels/test.tsv"
@@ -18,6 +19,10 @@ if __name__ == '__main__':
     parser.add_argument('--queryfile', default='../outputs/query4bm25/bm25_cast_test1/queries.jsonl', help='output: query file')
 
     args = parser.parse_args()
+
+    outdir = os.path.dirname(args.qrelfile)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
 
     qrel_lines = []
     query_lines = []

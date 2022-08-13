@@ -31,7 +31,6 @@ class QueryRewriter:
     
     def rewrite_queries(self, data_name:str, output_path:str):
         """ converts all conv states to rewritten queries """
-        
         eval_data = DataLoader(data_name)
         conv_states = eval_data.get_conv_states()
         
@@ -44,12 +43,20 @@ class QueryRewriter:
     
     def gold_rewrite_queries(self, data_name:str, output_path:str):
         """ prepares the dataset with the gold standard queries """
-        
         eval_data = DataLoader(data_name)
         queries = eval_data.get_gold_rewrites()
         
         save_jsonl(queries, output_path)
 
+    def raw_context(self, data_name:str, output_path:str, num_utts:int, num_resp:int=None):
+        """ returns raw past context """
+        eval_data = DataLoader(data_name)
+        num_utts = int(num_utts)
+        num_resp = int(num_resp) if num_resp else None
+        queries = eval_data.get_raw_context(num_utts, num_resp)
+        
+        save_jsonl(queries, output_path)
 
+        
         
     

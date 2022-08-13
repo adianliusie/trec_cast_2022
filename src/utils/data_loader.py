@@ -54,11 +54,38 @@ class DataLoader:
                 output.append(cur_ex)        
         return output
     
+    def get_raw_context(self, num_utts:int=None, num_resp:int=None):
+        print(num_utts, num_resp)
+        if num_resp:
+            assert num_resp < num_utts
+
+        output = []
+        for conv in self.convs:
+            utts = conv.utterances      
+            for k in range(len(utts)):
+                utt = utts[k]
+                utt_text = [utt.text]               
+
+                if num_resp:
+                    context_1 = [u.text for u in utts[max(k-num_utts, 0):max(k-num_resp, 0)]]
+                    context_2 = [u.text_passage for u in utts[max(k-num_resp, 0):k]]
+                    context = context_1 + flatten(context_2) + utt_text
+                else:
+                    past_context = [u.text_passage for u in utts[max(k-num_utts, 0):k]]
+                    context = flatten(past_context) + utt_text
+                
+                context = ' '.join(context[-200:])
+                cur_ex = {'q_id': f'{conv.conv_id}_{utt.utt_id}', 
+                          'text': context,
+                          'result_text': utt.result_text,
+                          'result_id': utt.result_id}
+                output.append(cur_ex)         
+        return output
+    
     def get_conv_states(self):
         output = []
         for conv in self.convs:
             utts = conv.utterances
-            
             for k in range(len(utts)):
                 utt = utts[k]
                 context_1 = [u.text for u in utts[max(k-4, 0):max(k-2, 0)]]

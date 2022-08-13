@@ -14,12 +14,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     rewriter = QueryRewriter()
-    
+
     if args.gold:
         rewriter.gold_rewrite_queries(args.data_name, args.output_path)
-    if args.raw_context:
-        print(args.raw_context)
+    elif args.raw_context:
         rewriter.raw_context(args.data_name, args.output_path, *args.raw_context)
     else:
         rewriter.rewrite_queries(args.data_name, args.output_path)
-

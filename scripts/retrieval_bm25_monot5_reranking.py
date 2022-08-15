@@ -48,11 +48,13 @@ if __name__ == '__main__':
     #########################################
 
     #### Provide parameters for Elasticsearch
-    hostname = "localhost" #localhost
-    index_name = "bm25_cast" # trec-covid
+    hostname = "localhost" 
+    index_name = "bm25_cast"
+    timeout = 10000
+    retry_on_timeout = True
     initialize = True # False
 
-    model = BM25(index_name=index_name, hostname=hostname, initialize=initialize)
+    model = BM25(index_name=index_name, hostname=hostname, initialize=initialize, timeout=timeout, retry_on_timeout=retry_on_timeout)
     retriever = EvaluateRetrieval(model, k_values=[1,3,5,10,100,500,1000])
 
     #### Retrieve dense results (format of results is identical to qrels)

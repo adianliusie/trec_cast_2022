@@ -47,7 +47,9 @@ if __name__ == '__main__':
     #### https://www.elastic.co/
     hostname = "localhost" #localhost
     index_name = "bm25_cast" # scifact
-
+    timeout = 10000
+    retry_on_timeout = True
+    
     #### Intialize #### 
     # (1) True - Delete existing index and re-index all documents from scratch 
     # (2) False - Load existing index
@@ -58,8 +60,8 @@ if __name__ == '__main__':
     # number_of_shards = 1
     # model = BM25(index_name=index_name, hostname=hostname, initialize=initialize, number_of_shards=number_of_shards)
     # (2) For datasets with big corpus ==> keep default configuration
-    model = BM25(index_name=index_name, hostname=hostname, initialize=initialize)
-    retriever = EvaluateRetrieval(model, k_values=[1,3,5,10,100,1000])
+    model = BM25(index_name=index_name, hostname=hostname, initialize=initialize, timeout=timeout, retry_on_timeout=retry_on_timeout)
+    retriever = EvaluateRetrieval(model, k_values=[1,3,5,10,100,500,1000])
 
     #### Retrieve dense results (format of results is identical to qrels)
     results = retriever.retrieve(corpus, queries)
@@ -67,7 +69,7 @@ if __name__ == '__main__':
     #### Evaluate your retrieval using NDCG@k, MAP@K ...
     logging.info("Retriever evaluation for k in: {}".format(retriever.k_values))
     ndcg, _map, recall, precision = retriever.evaluate(qrels, results, retriever.k_values)
-
+    
     #### Save retrieval results ####
     fout = open(args.output_path, 'w', encoding='utf-8')
     for query_id in results.keys():

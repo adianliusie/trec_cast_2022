@@ -1,7 +1,6 @@
 from beir import util, LoggingHandler
 from beir.datasets.data_loader import GenericDataLoader
 from beir.retrieval.evaluation import EvaluateRetrieval
-from beir.retrieval.search.lexical import BM25Search as BM25
 from beir.reranking.models import MonoT5
 from beir.reranking import Rerank
 

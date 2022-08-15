@@ -30,18 +30,6 @@ if __name__ == '__main__':
                         handlers=[LoggingHandler()])
     #### /print debug information to stdout
 
-    # #### Download trec-covid.zip dataset and unzip the dataset
-    # dataset = "trec-covid"
-    # url = "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/{}.zip".format(dataset)
-    # out_dir = os.path.join(pathlib.Path(__file__).parent.absolute(), "datasets")
-    # data_path = util.download_and_unzip(url, out_dir)
-
-    # #### Provide the data path where trec-covid has been downloaded and unzipped to the data loader
-    # data folder would contain these files: 
-    # (1) trec-covid/corpus.jsonl  (format: jsonlines)
-    # (2) trec-covid/queries.jsonl (format: jsonlines)
-    # (3) trec-covid/qrels/test.tsv (format: tsv ("\t"))
-
     corpus, queries, qrels = GenericDataLoader(args.data_path).load(split="test")
 
     #### Restore the results from BM25 #####
@@ -92,7 +80,7 @@ if __name__ == '__main__':
     reranker = Rerank(cross_encoder_model, batch_size=128)
 
     # # Rerank top-100 results using the reranker provided
-    rerank_results = reranker.rerank(corpus, queries, results, top_k=10)
+    rerank_results = reranker.rerank(corpus, queries, results, top_k=1000)
 
     #### Evaluate your retrieval using NDCG@k, MAP@K ...
     k_values = [1,3,5,10,100,500,1000]
@@ -100,22 +88,5 @@ if __name__ == '__main__':
     ndcg, _map, recall, precision = EvaluateRetrieval.evaluate(qrels, rerank_results, k_values)
 
     #### Save retrieval results ####
-    save_retrieval_results(args.output_path, results, corpus)
-    # fout = open(args.output_path, 'w', encoding='utf-8')
-    # for query_id in rerank_results.keys():
-    #     result_dict = dict()
-    #     result_dict["q_id"] = query_id
-    #     result_dict["results"] = []
+    save_retrieval_results(args.output_path, rerank_results, corpus)
 
-    #     scores_dict = rerank_results[query_id]
-    #     scores = sorted(scores_dict.items(), key=lambda item: item[1], reverse=True)
-    #     for i in range(len(scores)):
-    #         doc_dict = dict()
-    #         id, score = scores[i]
-    #         doc_dict["result_id"] = id
-    #         doc_dict["text"] = corpus[id].get("text")
-    #         doc_dict["score"] = score
-    #         result_dict["results"].append(doc_dict)
-    #     fout.write(json.dumps(result_dict) + '\n')
-    
-    # fout.close()

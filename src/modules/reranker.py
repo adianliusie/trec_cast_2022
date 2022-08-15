@@ -101,14 +101,16 @@ class PassageReranker(ReRanker):
         passages = []
         cur_passage = ''
         for sent in sents:
-            if (cur_passage +sent.text).count(' ') < max_len:
-                cur_passage += ' ' + sent.text
+            if (cur_passage+sent.text).count(' ') < max_len:
+                cur_passage += ' '+sent.text
             elif cur_passage:
                 passages.append(cur_passage)
                 cur_passage = sent.text
+            else:
+                passages.append(sent.text)
 
+        #at end of document, if passage add it
         if cur_passage:
             passages.append(cur_passage)
         return passages
-
-    
+  

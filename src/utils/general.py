@@ -2,6 +2,7 @@ import json
 import jsonlines
 import sys
 from os.path import abspath
+import os
 
 def save_jsonl(data:list, path:str):
     if '.jsonl' not in path:
@@ -44,3 +45,31 @@ def get_base_dir():
         base_path = src_path
         
     return base_path
+
+def save_retrieval_results(output_path, results, corpus):
+    fout = open(output_path, 'w', encoding='utf-8')
+    for query_id in results.keys():
+        result_dict = dict()
+        result_dict["q_id"] = query_id
+        result_dict["results"] = []
+
+        scores_dict = results[query_id]
+        scores = sorted(scores_dict.items(), key=lambda item: item[1], reverse=True)
+        for i in range(len(scores)):
+            doc_dict = dict()
+            id, score = scores[i]
+            doc_dict["result_id"] = id
+            doc_dict["text"] = corpus[id].get("text")
+            doc_dict["score"] = score
+            result_dict["results"].append(doc_dict)
+        fout.write(json.dumps(result_dict) + '\n')
+    
+    fout.close()
+
+def check_output_path(output_path):
+    if os.path.exists(output_path):
+        exit(f"{output_path} already exists!")
+
+    outdir = os.path.dirname(output_path)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)

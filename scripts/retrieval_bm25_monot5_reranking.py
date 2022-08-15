@@ -11,7 +11,7 @@ import random
 import json
 import argparse
 
-from src.utils.general import save_script_args
+from src.utils.general import save_script_args, save_retrieval_results, check_output_path
 
 if __name__ == '__main__':
     save_script_args()
@@ -21,6 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_path',  help='Output file, retrievaled documents and corresponding scores for each query.')
 
     args = parser.parse_args()
+    check_output_path(args.output_path)
 
     #### Just some code to print debug information to stdout
     logging.basicConfig(format='%(asctime)s - %(message)s',
@@ -102,33 +103,6 @@ if __name__ == '__main__':
     ndcg, _map, recall, precision = EvaluateRetrieval.evaluate(qrels, rerank_results, retriever.k_values)
 
     #### Save retrieval results ####
-    fout = open(args.output_path, 'w', encoding='utf-8')
-    for query_id in rerank_results.keys():
-        result_dict = dict()
-        result_dict["q_id"] = query_id
-        result_dict["results"] = []
+    save_retrieval_results(args.output_path, results, corpus)
 
-        scores_dict = rerank_results[query_id]
-        scores = sorted(scores_dict.items(), key=lambda item: item[1], reverse=True)
-        for i in range(len(scores)):
-            doc_dict = dict()
-            id, score = scores[i]
-            doc_dict["result_id"] = id
-            doc_dict["text"] = corpus[id].get("text")
-            doc_dict["score"] = score
-            result_dict["results"].append(doc_dict)
-        fout.write(json.dumps(result_dict) + '\n')
     
-    fout.close()
-
-    #### Print top-k documents retrieved ####
-    # top_k = 10
-
-    # query_id, ranking_scores = random.choice(list(rerank_results.items()))
-    # scores_sorted = sorted(ranking_scores.items(), key=lambda item: item[1], reverse=True)
-    # logging.info("Query : %s\n" % queries[query_id])
-
-    # for rank in range(top_k):
-    #     doc_id = scores_sorted[rank][0]
-    #     # Format: Rank x: ID [Title] Body
-    #     logging.info("Rank %d: %s [%s] - %s\n" % (rank+1, doc_id, corpus[doc_id].get("title"), corpus[doc_id].get("text")))

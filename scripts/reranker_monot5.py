@@ -33,6 +33,7 @@ if __name__ == '__main__':
     corpus, queries, qrels = GenericDataLoader(args.data_path).load(split="test")
 
     #### Restore the results from BM25 #####
+    logging.info("Loading retrieval results from {}".format(args.retrieval_result_path))
     results = dict()
     with open(args.retrieval_result_path, 'r') as json_file:
         for line in json_file:
@@ -76,6 +77,7 @@ if __name__ == '__main__':
     # 16.'unicamp-dl/ptt5-base-pt-msmarco-100k-v1':   ['▁não'  , '▁sim']
     # 17.'unicamp-dl/ptt5-base-en-pt-msmarco-10k-v1': ['▁não'  , '▁sim']
 
+    logging.info("Start reranking ...")
     cross_encoder_model = MonoT5('castorini/monot5-base-msmarco', token_false='▁false', token_true='▁true')
     reranker = Rerank(cross_encoder_model, batch_size=128)
 

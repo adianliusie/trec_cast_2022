@@ -22,7 +22,7 @@ class Rerank:
     def load_spacy(self):
         self.nlp = spacy.load("en_core_web_sm", exclude=[
                  "parser", "tagger", "ner", "attribute_ruler", "lemmatizer", "tok2vec"])
-        # self.nlp.enable_pipe("senter")
+        self.nlp.enable_pipe("senter")
         self.nlp.max_length = 2000000  # for documents that are longer than the spacy character limit
 
         

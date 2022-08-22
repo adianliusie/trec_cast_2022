@@ -47,7 +47,9 @@ if __name__ == '__main__':
 
     #### Sparse Retrieval using SPARTA #### 
     model_path = "BeIR/sparta-msmarco-distilbert-base-v1"
-    sparse_model = SparseSearch(models.SPARTA(model_path), batch_size=128)
+    # sparse_model = SparseSearch(models.SPARTA(model_path), batch_size=128)
+    batch_size=1
+    sparse_model = SparseSearch(models.SPARTA(model_path), batch_size=batch_size)
     retriever = EvaluateRetrieval(sparse_model, k_values=[1,3,5,10,100,500,1000])
 
     #### Retrieve dense results (format of results is identical to qrels)

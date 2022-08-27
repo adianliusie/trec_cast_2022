@@ -1,7 +1,7 @@
 from beir import util, LoggingHandler
 from beir.retrieval import models
 from beir.datasets.data_loader import GenericDataLoader
-from beir.datasets.data_loader_hf import HFDataLoader
+# from beir.datasets.data_loader_hf import HFDataLoader
 from beir.retrieval.evaluation import EvaluateRetrieval
 from beir.retrieval.search.dense import DenseRetrievalExactSearch as DRES
 from beir.retrieval.search.dense import DenseRetrievalParallelExactSearch as DRPES
@@ -11,7 +11,9 @@ import pathlib, os
 import random
 import json
 import argparse
+from tqdm import tqdm
 from src.utils.general import save_script_args, save_retrieval_results, check_output_path
+from src.utils.beir_data_loader_hf import HFDataLoader
 
 
 if __name__ == '__main__':
@@ -39,11 +41,11 @@ if __name__ == '__main__':
     # (2) nfcorpus/queries.jsonl (format: jsonlines)
     # (3) nfcorpus/qrels/test.tsv (format: tsv ("\t"))
 
-    corpus, queries, qrels = HFDataLoader(data_folder=args.data_path, streaming=False, keep_in_memory=False).load(split="test")
+    corpus, queries, qrels = HFDataLoader(data_folder=args.data_path, streaming=False, keep_in_memory=False, cache_dir="~/rds/hpc-work/.cache/huggingface/datasets").load(split="test")
     # corpus, queries, qrels = GenericDataLoader(data_folder=args.data_path).load(split="test")
     # convert corpus to dict, will be used when saving results, as the loaded format is different from DataLoader
     corpus_dict = dict()
-    for i in range(len(corpus)):
+    for i in tqdm(range(len(corpus))):
         corpus_dict[corpus[i].get('id')] = {'title': corpus[i].get('title'), 'text': corpus[i].get('text')}
 
     #### Dense Retrieval using ANCE #### 

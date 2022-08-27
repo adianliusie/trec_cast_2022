@@ -32,7 +32,7 @@ def convert_jsonl_to_q_rel(path):
             pass
             #confused as in given examples, there seems to be multiple choices?
 
-def convert_jsonl_to_beir_results(path):
+def convert_jsonl_to_beir_results(path, top_k=None):
     """ convert bm25/reranker output jsonl file into the results format for evaluation """
     queries = load_jsonl(path)
     out_results = dict()
@@ -40,6 +40,8 @@ def convert_jsonl_to_beir_results(path):
         q_id = query['q_id']
         q_results = query['results']
         out_results[q_id] = dict()
+        if top_k:
+            q_results = q_results[:top_k]
         for q_result in q_results:
             doc_id = q_result["result_id"]
             score = q_result["score"]

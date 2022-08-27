@@ -66,6 +66,7 @@ if __name__ == '__main__':
     parser.add_argument('--predictions', help='document ordering (either result file, or jsonl file')
     parser.add_argument('--references', help='relevant documents for each query (either q_rel or jsonl file')
     parser.add_argument('--threshold', type=int, default=2, help='conver the relevant score to 1 if it is >= threshold, 2021:2, 2022:1')
+    parser.add_argument('--top_k', type=int, default=None, help='top_k results to be evaluated, default: evaluate all the results')
 
     args = parser.parse_args()
     
@@ -80,7 +81,7 @@ if __name__ == '__main__':
     
     # load resutls
     logging.info("Loading predictions: {}".format(args.predictions))
-    results = convert_jsonl_to_beir_results(args.predictions)
+    results = convert_jsonl_to_beir_results(args.predictions, top_k=args.top_k)
 
     # evaluate
     logging.info("Retriever evaluation for k in: {}".format(k_values))

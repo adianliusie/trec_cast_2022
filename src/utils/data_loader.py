@@ -16,7 +16,11 @@ class TrecConversation:
     def reformat_utt(utt, fields):
         utt = utt.copy()
         for k, v in fields.items():
-            utt[k] = utt.pop(v)
+            # import ipdb;ipdb.set_trace()
+            if v in utt:
+                utt[k] = utt.pop(v)
+            else:
+                utt[k] = [] if v == 'provenance' else ''
         return utt
 
 class TrecUtterance():
@@ -118,11 +122,12 @@ class DataLoader:
         json_data = load_json(path)
         
         fields = {'utt_id':'number', 'text':'utterance', 'result_text':'response',
-                  'result_id':'provenance', 'gold_rewritten_utt':'manual_rewritten_utterance'}
+                    'result_id':'provenance', 'gold_rewritten_utt':'manual_rewritten_utterance'}
+                  
         
         convs = []
         for conv in json_data:
-            if conv['number'] == 142: continue
+            # if conv['number'] == 142: continue
             convs.append(TrecConversation(conv_id=conv['number'], utts=conv['turn'], fields=fields))
         return convs
     

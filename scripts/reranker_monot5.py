@@ -19,7 +19,9 @@ if __name__ == '__main__':
     parser.add_argument('--data_path',  help='the directory for the input files')
     parser.add_argument('--retrieval_result_path',  help='the directory for the results file after retrieval')
     parser.add_argument('--output_path',  help='Output file, retrievaled documents and corresponding scores for each query.')
-
+    parser.add_argument('--top_k', type=int, default=1000, help='Rerank top_k results from the retrieval_results.')
+    parser.add_argument('--model_name', type=str, default='castorini/monot5-base-msmarco', help='The model to do the rerank.')
+    
     args = parser.parse_args()
     check_output_path(args.output_path)
 
@@ -78,11 +80,12 @@ if __name__ == '__main__':
     # 17.'unicamp-dl/ptt5-base-en-pt-msmarco-10k-v1': ['▁não'  , '▁sim']
 
     logging.info("Start reranking ...")
-    cross_encoder_model = MonoT5('castorini/monot5-base-msmarco', token_false='▁false', token_true='▁true')
+    logging.info(f"model name: {args.model_name}")
+    cross_encoder_model = MonoT5(args.model_name, token_false='▁false', token_true='▁true')
     reranker = Rerank(cross_encoder_model, batch_size=128)
 
     # # Rerank top-100 results using the reranker provided
-    rerank_results = reranker.rerank(corpus, queries, results, top_k=1000)
+    rerank_results = reranker.rerank(corpus, queries, results, top_k=args.top_k)
 
     #### Evaluate your retrieval using NDCG@k, MAP@K ...
     k_values = [1,3,5,10,100,500,1000]

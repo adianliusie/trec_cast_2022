@@ -62,7 +62,7 @@ if __name__ == '__main__':
     # model = BM25(index_name=index_name, hostname=hostname, initialize=initialize, number_of_shards=number_of_shards)
     # (2) For datasets with big corpus ==> keep default configuration
     model = BM25(index_name=index_name, hostname=hostname, initialize=initialize, timeout=timeout, retry_on_timeout=retry_on_timeout)
-    retriever = EvaluateRetrieval(model, k_values=[1,3,5,10,100,500,1000])
+    retriever = EvaluateRetrieval(model, k_values=[1,3,5,10,100,500,1000,3000,5000,9000])
 
     #### Retrieve dense results (format of results is identical to qrels)
     results = retriever.retrieve(corpus, queries)

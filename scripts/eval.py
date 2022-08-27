@@ -64,23 +64,22 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(description='rewrites standalone queries for a data set')
     parser.add_argument('--predictions', help='document ordering (either result file, or jsonl file')
-    parser.add_argument('--references',  help='relevant documents for each query (either q_rel or jsonl file')
+    parser.add_argument('--references', help='relevant documents for each query (either q_rel or jsonl file')
+    parser.add_argument('--threshold', type=int, default=2, help='conver the relevant score to 1 if it is >= threshold, 2021:2, 2022:1')
 
     args = parser.parse_args()
     
     logging.basicConfig(format='%(message)s', level=logging.INFO)
 
     # parameters
-    k_values = [1,3,5,10,100,500,1000]
+    k_values = [1,3,5,10,100,500,1000,3000,5000,9000]
 
     # load referenecs
     logging.info("Loading reference: {}".format(args.references))
-    # print("Loading reference: {}".format(args.references))
-    qrels = load_q_rel_tsv(args.references, threshold=2)
+    qrels = load_q_rel_tsv(args.references, threshold=args.threshold)
     
     # load resutls
     logging.info("Loading predictions: {}".format(args.predictions))
-    # print("Loading predictions: {}".format(args.predictions))
     results = convert_jsonl_to_beir_results(args.predictions)
 
     # evaluate

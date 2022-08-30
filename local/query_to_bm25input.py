@@ -15,40 +15,26 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='retrieval documents using BM25.')
     parser.add_argument('--infile', default='../outputs/queries/trec_2021_baseline_v2.jsonl', help='output from rewriter')
-    parser.add_argument('--qrelfile', default='../outputs/query4bm25/bm25_cast_test1/qrels/test.tsv', help='output: ground truth')
     parser.add_argument('--queryfile', default='../outputs/query4bm25/bm25_cast_test1/queries.jsonl', help='output: query file')
-    parser.add_argument('--data_name',  default='trec_2021', help='data set, trec_2021 or trec_2022, trec_2022 have multiple groundtruth for each query in the data file')
 
     args = parser.parse_args()
 
-    outdir = os.path.dirname(args.qrelfile)
+    outdir = os.path.dirname(args.queryfile)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    qrel_lines = []
     query_lines = []
     with open(args.infile, 'r', encoding='utf-8') as f:
         for line in f:
             data = json.loads(line)    # keys: q_id, text, result_text, result_id
             query_id = data.get("q_id")
             score = "1"
-            if args.data_name == "trec_2021":
-                corpus_id = data.get("result_id")
-                qrel_lines.append(f"{query_id}\t{corpus_id}\t{score}")
-            else:
-                corpus_ids = data.get("result_id")
-                for corpus_id in corpus_ids:
-                    qrel_lines.append(f"{query_id}\t{corpus_id}\t{score}")
             query_dict = dict()
             query_dict["_id"] = query_id
             query_dict["text"] = data.get("text")
             query_dict["metadata"] = {}
             query_lines.append(query_dict)
 
-    with open(args.qrelfile, 'w', encoding='utf-8') as fout:
-        fout.write("query-id\tcorpus-id\tscore\n")
-        for line in qrel_lines:
-            fout.write(line + '\n')
 
     with open(args.queryfile, 'w', encoding='utf-8') as fout:
         for query_dict in query_lines:
